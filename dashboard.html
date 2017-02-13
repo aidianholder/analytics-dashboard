@@ -1,0 +1,564 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+	    <meta name="description" content="Demo project with jQuery">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<link rel="stylesheet" href="http://netdna.bootstrapcdn.com/bootstrap/3.0.3/css/bootstrap.min.css">	
+<!-- Latest compiled and minified CSS -->
+		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">		
+		<script src="http://code.jquery.com/jquery-1.10.2.min.js"></script>
+		<!-- Latest compiled and minified JS -->
+		<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>	
+		<script>
+			(function(w,d,s,g,js,fs){
+			  g=w.gapi||(w.gapi={});g.analytics={q:[],ready:function(f){this.q.push(f);}};
+			  js=d.createElement(s);fs=d.getElementsByTagName(s)[0];
+			  js.src='https://apis.google.com/js/platform.js';
+			  fs.parentNode.insertBefore(js,fs);js.onload=function(){g.load('analytics');};
+			}(window,document,'script'));
+		</script>
+
+		<script src="date-range-selector.js"></script>
+		<script src="active-users.js"></script>
+
+
+		<style type="text/css">
+			h3.section-header {
+				padding: 10px;
+			}
+
+			p.internal-footer {
+				margin: 1em auto;
+				width: 80%;
+
+			}
+
+			#radio-wrap {
+				float:left;
+				margin: 10px;
+
+
+			}
+			#story-traffic-title {
+				display: block;
+				float:left;
+				margin-right: 15px;
+			}
+
+			.DateRangeSelector-item {
+				float:left;
+				margin: 10px;
+
+			}
+
+			#traffic-totals>h5, #traffic-totals>span {
+				display: block;
+				float:left;
+				margin: 5px;
+
+			}
+
+			#traffic-totals>h4 {
+				margin-bottom:5px;
+			}
+
+		</style>
+	</head>
+	<body>
+		<div class="container">
+			<div id="embed-api-auth-container"></div>
+			<div class="row">
+				<div class="col-xs-12">
+					<label for="reporterFilter">Select Reporter</label>
+					<select name="reporterName" id="reporterFilter" class="form-control">
+						<option value="kbain@yakimaherald.com" selected>Kaitlin Bain</option>
+						<option value="dmeyers@yakimaherald.com">Donald Meyers</option>
+						<option value="pferolito@yakimaherald.com">Phil Ferolito</option>
+					</select>
+				</div>
+			</div>
+
+			<div class="row">
+
+				<!--<h3 class="section-header bg-primary">Today</h3>-->
+				<div class="col-sm-6 col-xs-12">
+					<div id="date-range-selector"></div>
+				</div>
+				<div class="col-sm-6 col-xs-12" id="traffic-totals">
+					<h4>Total Traffic</h4>
+					<h5>Uniques: </h5><span id="totalUnique">0</span>
+					<h5>Pageviews: </h5><span id="totalPages">0</span>
+					<h5>Avg Time: </h5><span id="totalAveTime">0</span>
+				</div>
+
+			</div>
+
+			<div class="row">
+
+
+			
+				<div class="col-sm-6">
+					<h4 id="story-traffic-title">Article Traffic</h4>
+					<div id='radio-wrap'>
+						<label class="radio-inline">
+							<input group='todayMetric' type='radio' name='todayMetric' id='radioUnique' value="ga:uniquePageviews" checked>Uniques
+						</label>
+						<label class="radio-inline">
+							<input group='todayMetric' type='radio' name='todayMetric' id='radioPageview' value='ga:pageviews'>Pageviews
+						</label>
+						<label class="radio-inline">
+							<input group='todayMetric' type='radio' name='todayMetric' id='radioTime' value='ga:avgTimeOnPage'>Time on Page
+						</label>
+					</div>
+					<div id="todayTraffic"></div>
+					<p class="text-center internal-footer bg-primary">Click a title to see referral sources for that article.</p>
+				</div>
+			
+				<div class="col-sm-6">
+
+					<h4 id="referral-traffic-title">Referral Sources</h4>
+					<div id="todayReferral"></div>
+
+					
+					<div class="col-sm-4">	
+						<div id="totalUnique"></div>
+					</div>
+					<div class="col-sm-4">	
+						<div id="totalPages"></div>
+					</div>
+					<div class="col-sm-4">	
+						<div id="totalAveTime"></div>
+					</div>
+
+				</div>
+		</div><!--end row -->
+
+		<div class="row">
+			
+			
+			
+			<h3 class="section-header bg-primary">Past Month</h3>
+
+			<div id='radio-wrap-monthly text-center'>
+						<label class="radio-inline">
+							<input group='monthMetric' type='radio' name='monthMetric' id='radioMonthUnique' value="ga:uniquePageviews" checked>Uniques
+						</label>
+						<label class="radio-inline">
+							<input group='monthMetric' type='radio' name='monthMetric' id='radioMonthPageview' value='ga:pageviews'>Pageviews
+						</label>
+						<label class="radio-inline">
+							<input group='monthMetric' type='radio' name='monthMetric' id='radioMonthTime' value='ga:avgTimeOnPage'>Time on Page
+						</label>
+			</div>
+
+			<div class="col-md-10 col-md-offset-1">
+				<div id='monthlyChart'>
+
+
+				</div>
+
+			</div>
+
+
+		</div>
+
+		<div class="row">
+
+			<h3 class="section-header bg-primary">Past Year</h3>
+
+			<div id='radio-wrap-year text-center'>
+						<label class="radio-inline">
+							<input group='yearMetric' type='radio' name='yearMetric' id='radioyearUnique' value="ga:uniquePageviews" checked>Uniques
+						</label>
+						<label class="radio-inline">
+							<input group='yearMetric' type='radio' name='yearMetric' id='radioyearPageview' value='ga:pageviews'>Pageviews
+						</label>
+						<label class="radio-inline">
+							<input group='yearMetric' type='radio' name='yearMetric' id='radioyearTime' value='ga:avgTimeOnPage'>Time on Page
+						</label>
+			</div>
+
+			<div class="col-md-10 col-md-offset-1">
+				<div id='annualChart'>
+
+
+				</div>
+
+			</div>
+
+
+		</div>
+
+
+
+
+	</body>
+	
+
+
+	<script type="text/javascript">
+		gapi.analytics.ready(function() {
+
+			var titleHash = {'ga:uniquePageviews':'Unique Page Views', 'ga:pageviews': 'Pageviews', 'ga:avgTimeOnPage': 'Time on Page'};
+
+
+			gapi.analytics.auth.authorize({
+			    container: 'embed-api-auth-container',
+			    clientid: '358104014451-02duldjjicu85olvisf18jcm6t297oj7.apps.googleusercontent.com'
+			  });
+
+			var userFilter = $( '#reporterFilter' ).val();
+			console.log(userFilter);
+
+
+			$( 'input[name=todayMetric]' ).change(function(){
+				var metricPicked = $( 'input[name=todayMetric]:checked' ).val();
+				var sortMetric = '-' + metricPicked;
+				dailyViews.set({query: {metrics: metricPicked, sort: sortMetric}})
+				dailyViews.execute();
+			})
+
+			var dateRange = {
+					'start-date': 'today',
+					'end-date': 'today'
+				};
+
+			var dateRangeSelector = new gapi.analytics.ext.DateRangeSelector({
+				container: 'date-range-selector'
+			})
+				.set(dateRange)
+				.execute();
+
+			
+
+
+			var dailyViews = new gapi.analytics.googleCharts.DataChart({
+						  	query: {
+
+						  			ids: 'ga:60921314',
+						  			metrics: 'ga:uniquePageviews',
+						  			dimensions: 'ga:dimension2', 
+						  			'start-date': 'today',
+						  			'end-date': 'today',
+						  			sort: '-ga:uniquePageviews',
+						  			filters: 'ga:dimension1=@' + userFilter,
+						  			'max-results': '15'
+						  			
+						 	 }, 
+						 	 chart: {
+						 	 	type: 'TABLE',
+						 	 	container: 'todayTraffic',
+						 	 	options: {
+						 	 		title: 'Story Traffic',
+						 	 		width: '100%'
+						 	 	}
+
+						 	 }
+
+						  })
+  			dailyViews.execute();
+
+  			var dailyRefer = new gapi.analytics.googleCharts.DataChart({
+
+  						query: {
+  								ids: 'ga:60921314',
+  								metrics: 'ga:uniquePageviews',
+  								dimensions: 'ga:source',
+  								'start-date': 'today',
+  								'end-date': 'today',
+  								sort: '-ga:uniquePageviews',
+  								filters: 'ga:dimension1=@' + userFilter,
+  								'max-results': '15'
+
+  						},
+  						chart: {
+  							type: 'TABLE',
+  							container: 'todayReferral',
+  							options: {
+  								width: '100%'
+
+  							}
+  						}
+
+
+  					})
+  			dailyRefer.execute();
+
+
+  			//****** TOTALS FOR TIME PERIOD *****//
+
+  			var totalData = new gapi.analytics.report.Data({
+  				query: {
+  					ids: 'ga:60921314',
+  					metrics: 'ga:uniquePageviews, ga:pageviews, ga:avgTimeOnPage',
+  					'start-date': 'today',
+  					'end-date':'today',
+  					filters: 'ga:dimension1=@' + userFilter
+  				}
+  			})
+
+  			totalData.on('success', function(response){
+  				console.log(response)
+  				var u, p, t, s;
+  				u = response.rows[0][0]
+  				p = response.rows[0][1]
+  				t = response.rows[0][2]
+  				s = toHHMMSS(t)
+
+  				$( '#totalUnique' ).html(u)
+  				$( '#totalPages').html(p)
+  				$( '#totalAveTime').html(s)
+  			})
+
+  			totalData.execute();
+
+/*
+  			var totalUniques = new gapi.analytics.googleCharts.DataChart({
+  					query: {
+  						ids: 'ga:60921314',
+  						metrics: 'ga:uniquePageviews',
+  						'start-date': 'today',
+  						'end-date': 'today',
+  						filters: 'ga:dimension1=@' + userFilter
+  					},
+  					chart: {
+  						type: 'TABLE',
+  						container: 'totalUnique'
+
+  					}
+  			})
+  			totalUniques.execute();
+
+  			var totalPageviews = new gapi.analytics.googleCharts.DataChart({
+  					query: {
+  						ids: 'ga:60921314',
+  						metrics: 'ga:pageviews',
+  						'start-date': 'today',
+  						'end-date': 'today',
+  						filters: 'ga:dimension1=@' + userFilter
+  					},
+  					chart: {
+  						type: 'TABLE',
+  						container: 'totalPages'
+  					}
+  			})
+  			totalPageviews.execute();
+
+  			var totalTimes = new gapi.analytics.googleCharts.DataChart({
+  					query: {
+  						ids: 'ga:60921314',
+  						metrics: 'ga:avgTimeOnPage',
+  						'start-date': 'today',
+  						'end-date': 'today',
+  						filters: 'ga:dimension1=@' + userFilter
+  					},
+  					chart: {
+  						type: 'TABLE',
+  						container: 'totalAveTime'
+
+  					}
+  			})
+  			totalTimes.execute();
+*/
+			
+
+
+  			$( '#reporterFilter' ).on('change', function(){
+  				var newReporter = $(this).find(":selected").val(), newReporterFilter = {filters: 'ga:dimension1=@' + newReporter};
+  				dailyViews.set({query: newReporterFilter }).execute();
+  				dailyRefer.set({query: newReporterFilter }).execute();
+  				monthlyMetrics.set({query: newReporterFilter}).execute();
+  				yearlyMetrics.set({query: newReporterFilter}).execute();
+  				totalData.set({query:newReporterFilter}).execute();
+  				/*totalUniques.set({query: newReporterFilter }).execute();
+  				totalPageviews.set({query: newReporterFilter }).execute();
+  				totalTimes.set({query: newReporterFilter }).execute();*/
+
+
+  			})
+
+  			var dailyViewRowClickListener;
+
+  			dailyViews.on('success', function(response){
+  				console.log(response, response.chart)
+  				var dailyViewChart = response.chart;
+  				var dailyViewDataTable = response.dataTable;
+
+  				dailyViewRowClickListener = google.visualization.events.addListener(dailyViewChart, 'select', function(event){
+
+  					if (!dailyViewChart.getSelection().length) {
+  						var options = {
+  							query: {
+  								filters: 'ga:dimension1=@' + userFilter
+  								}
+  							}
+  						var headingTitle = 'Referral Sources'
+  						}
+
+  					else {
+  						var row = dailyViewChart.getSelection()[0].row;
+	  					var rawTitle = dailyViewDataTable.getValue(row, 0);
+	  					var storyTitle = rawTitle.replace(/,/, '\\,')
+	  					var shortTitle = storyTitle.split('|')[0]
+	  					var options = {
+	  						query: {
+	  							filters: 'ga:dimension2==' + storyTitle
+	  						}
+	  					};
+	  					var headingTitle = 'Referral Sources - ' + shortTitle
+  					};
+
+  					
+  					dailyRefer.set(options).execute();
+  					$( '#referral-traffic-title' ).text(headingTitle);
+
+  				})/*end listner & function*/
+
+  			})/*end 'dailyViews on success'*/
+
+
+  			dateRangeSelector.on('change', function(data){
+  				console.log(data)
+  				console.log(data['start-date']);
+  				var referOptions = {'start-date': data['start-date'], 'end-date': data['end-date'], filters: 'ga:dimension1=@' + userFilter}
+				dailyViews.set({query: data}).execute();
+				dailyRefer.set({query: referOptions}).execute();
+				/*totalUniques.set({query: data}).execute();
+				totalPageviews.set({query: data}).execute();
+				totalTimes.set({query: data}).execute();*/
+				
+			});
+
+
+
+  			$( 'input[name=monthMetric]' ).change(function(){
+				var metricMonthPicked = $( 'input[name=monthMetric]:checked' ).val();
+				var sortMonthMetric = '-' + metricMonthPicked;
+				var chartTitle = titleHash[metricMonthPicked];
+				monthlyMetrics.set({query: {metrics: metricMonthPicked, sort: sortMonthMetric}});
+				monthlyMetrics.set({chart: {options: {title: chartTitle}}});
+				monthlyMetrics.execute();
+			})
+
+
+
+  			var monthlyMetrics = new gapi.analytics.googleCharts.DataChart({
+				  	query: {
+						
+						ids: 'ga:60921314',
+				  		metrics: 'ga:uniquePageviews',
+				  		dimensions: 'ga:date', 'start-date': '30daysAgo', 'end-date': 'today',
+				  		filters: 'ga:dimension1=@' + userFilter  		
+				  	},
+				  	chart: {
+				  		container: 'monthlyChart',
+				  		type: 'COLUMN',
+				  		options: {
+				  			width: '80%',
+				  			title: 'Unique Page Views'
+
+				  		}
+				  	}
+				 });
+
+  			monthlyMetrics.execute();
+
+  			var monthlyViewRowClickListener;
+
+  			monthlyMetrics.on('success', function(response){
+  				console.log(response);
+
+  				var monthlyViewChart = response.chart;
+  				var monthlyViewDataTable = response.dataTable;
+
+  				monthlyViewRowClickListener = google.visualization.events.addListener(monthlyViewChart, 'select', function(event){
+
+  					if (!monthlyViewChart.getSelection().length) {
+  						var options = {
+  							query: {
+  								filters: 'ga:dimension1=@' + userFilter
+  								}
+  							}
+  						var headingTitle = 'Article Traffic'
+  						}
+
+  					else {
+  						var row = monthlyViewChart.getSelection()[0].row;
+  						console.log(row)
+	  					//var storyTitle = dailyViewDataTable.getValue(row, 0);
+	  					//var shortTitle = storyTitle.split('|')[0]
+	  					/*var options = {
+	  						query: {
+	  							filters: 'ga:pageTitle==' + storyTitle
+	  						}
+	  					};
+	  					var headingTitle = 'Referral Sources - ' + shortTitle*/
+  					};
+
+  					
+  					//dailyRefer.set(options).execute();
+  					//$( '#referral-traffic-title' ).text(headingTitle);
+
+  				})/*end listner & function*/
+
+  			})/*end 'dailyViews on success'*/
+
+
+  		//})
+
+  			$( 'input[name=yearMetric]' ).change(function(){
+				var metricYearPicked = $( 'input[name=yearMetric]:checked' ).val();
+				var sortYearMetric = '-' + metricYearPicked;
+				var chartTitle = titleHash[metricYearPicked];
+				yearlyMetrics.set({query: {metrics: metricYearPicked, sort: sortYearMetric}})
+				yearlyMetrics.set({chart: {options: {title: chartTitle}}});
+				yearlyMetrics.execute();
+			})
+
+
+
+  			var yearlyMetrics = new gapi.analytics.googleCharts.DataChart({
+				  	query: {
+						
+						ids: 'ga:60921314',
+				  		metrics: 'ga:uniquePageviews',
+				  		dimensions: 'ga:week', 'start-date': '365daysAgo', 'end-date': 'today',
+				  		filters: 'ga:dimension1=@' + userFilter  		
+				  	},
+				  	chart: {
+				  		container: 'annualChart',
+				  		type: 'LINE',
+				  		options: {
+				  			width: '80%',
+				  			title: 'Unique Page Views'
+
+				  		}
+				  	}
+				 });
+
+  			yearlyMetrics.execute();
+
+  			
+
+  		
+
+		})/*end ready function for GAPI*/
+
+
+		var toHHMMSS = function (seconds) {
+				var sec = Math.round(seconds)
+			    var sec_num = parseInt(sec, 10); // don't forget the second param
+			    var hours   = Math.floor(sec_num / 3600);
+			    var minutes = Math.floor((sec_num - (hours * 3600)) / 60);
+			    var seconds = sec_num - (hours * 3600) - (minutes * 60);
+
+			    if (hours   < 10) {hours   = "0"+hours;}
+			    if (minutes < 10) {minutes = "0"+minutes;}
+			    if (seconds < 10) {seconds = "0"+seconds;}
+			    return hours+':'+minutes+':'+seconds;
+			}
+
+	</script>
+</html>
