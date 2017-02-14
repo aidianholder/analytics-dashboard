@@ -73,6 +73,7 @@
 				<div class="col-xs-12">
 					<label for="reporterFilter">Select Reporter</label>
 					<select name="reporterName" id="reporterFilter" class="form-control">
+						<option value=# selected>Pick Reporter</option>
 						<option value="kbain@yakimaherald.com" selected>Kaitlin Bain</option>
 						<option value="dmeyers@yakimaherald.com">Donald Meyers</option>
 						<option value="pferolito@yakimaherald.com">Phil Ferolito</option>
@@ -281,8 +282,6 @@
 
   							}
   						}
-
-
   					})
   			dailyRefer.execute();
 
@@ -293,8 +292,8 @@
   				query: {
   					ids: 'ga:60921314',
   					metrics: 'ga:uniquePageviews, ga:pageviews, ga:avgTimeOnPage',
-  					'start-date': 'today',
-  					'end-date':'today',
+  					'start-date': dateRange['start-date'],
+  					'end-date':dateRange['end-date'],
   					filters: 'ga:dimension1=@' + userFilter
   				}
   			})
@@ -314,54 +313,7 @@
 
   			totalData.execute();
 
-/*
-  			var totalUniques = new gapi.analytics.googleCharts.DataChart({
-  					query: {
-  						ids: 'ga:60921314',
-  						metrics: 'ga:uniquePageviews',
-  						'start-date': 'today',
-  						'end-date': 'today',
-  						filters: 'ga:dimension1=@' + userFilter
-  					},
-  					chart: {
-  						type: 'TABLE',
-  						container: 'totalUnique'
 
-  					}
-  			})
-  			totalUniques.execute();
-
-  			var totalPageviews = new gapi.analytics.googleCharts.DataChart({
-  					query: {
-  						ids: 'ga:60921314',
-  						metrics: 'ga:pageviews',
-  						'start-date': 'today',
-  						'end-date': 'today',
-  						filters: 'ga:dimension1=@' + userFilter
-  					},
-  					chart: {
-  						type: 'TABLE',
-  						container: 'totalPages'
-  					}
-  			})
-  			totalPageviews.execute();
-
-  			var totalTimes = new gapi.analytics.googleCharts.DataChart({
-  					query: {
-  						ids: 'ga:60921314',
-  						metrics: 'ga:avgTimeOnPage',
-  						'start-date': 'today',
-  						'end-date': 'today',
-  						filters: 'ga:dimension1=@' + userFilter
-  					},
-  					chart: {
-  						type: 'TABLE',
-  						container: 'totalAveTime'
-
-  					}
-  			})
-  			totalTimes.execute();
-*/
 			
 
 
@@ -372,9 +324,6 @@
   				monthlyMetrics.set({query: newReporterFilter}).execute();
   				yearlyMetrics.set({query: newReporterFilter}).execute();
   				totalData.set({query:newReporterFilter}).execute();
-  				/*totalUniques.set({query: newReporterFilter }).execute();
-  				totalPageviews.set({query: newReporterFilter }).execute();
-  				totalTimes.set({query: newReporterFilter }).execute();*/
 
 
   			})
@@ -425,10 +374,7 @@
   				var referOptions = {'start-date': data['start-date'], 'end-date': data['end-date'], filters: 'ga:dimension1=@' + userFilter}
 				dailyViews.set({query: data}).execute();
 				dailyRefer.set({query: referOptions}).execute();
-				/*totalUniques.set({query: data}).execute();
-				totalPageviews.set({query: data}).execute();
-				totalTimes.set({query: data}).execute();*/
-				
+				totalData.execute();
 			});
 
 
