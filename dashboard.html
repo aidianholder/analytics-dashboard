@@ -74,9 +74,18 @@
 					<label for="reporterFilter">Select Reporter</label>
 					<select name="reporterName" id="reporterFilter" class="form-control">
 						<option value=# selected>Pick Reporter</option>
-						<option value="kbain@yakimaherald.com" selected>Kaitlin Bain</option>
+						<option value="tayer@yakimaherald.com">Tammy Ayer</option>
+						<option value="kbain@yakimaherald.com">Kaitlin Bain</option>
+						<option value="pferolito@yakimaherald.com">Phil Ferolito</option>					
+						<option value="maihoang@yakimaherald.com">Main Hoang</option>
+						<option value="miracheta@yakimaherald.com">Michelle Iracheta</option>
 						<option value="dmeyers@yakimaherald.com">Donald Meyers</option>
-						<option value="pferolito@yakimaherald.com">Phil Ferolito</option>
+						<option value="mmorey@yakimaherald.com">Mark Morey</option>
+						<option value="moliver@yakimaherald.com">Miles Oliver</option>						
+						<option value="pmuir@yakimaherald.com">Patrick Muir</option>
+						<option value="mrobsach@yakimaherald.com">Molly Robsach</option>
+
+
 					</select>
 				</div>
 			</div>
@@ -123,15 +132,7 @@
 					<div id="todayReferral"></div>
 
 					
-					<div class="col-sm-4">	
-						<div id="totalUnique"></div>
-					</div>
-					<div class="col-sm-4">	
-						<div id="totalPages"></div>
-					</div>
-					<div class="col-sm-4">	
-						<div id="totalAveTime"></div>
-					</div>
+					
 
 				</div>
 		</div><!--end row -->
@@ -211,7 +212,15 @@
 			  });
 
 			var userFilter = $( '#reporterFilter' ).val();
-			console.log(userFilter);
+
+			$( '#reporterFilter' ).on('change', function(){
+  				var newReporter = $(this).find(":selected").val(), newReporterFilter = {filters: 'ga:dimension1=@' + newReporter};
+  				dailyViews.set({query: newReporterFilter }).execute();
+  				dailyRefer.set({query: newReporterFilter }).execute();
+  				monthlyMetrics.set({query: newReporterFilter}).execute();
+  				yearlyMetrics.set({query: newReporterFilter}).execute();
+  				totalData.set({query:newReporterFilter}).execute();
+  			})
 
 
 			$( 'input[name=todayMetric]' ).change(function(){
@@ -232,7 +241,47 @@
 				.set(dateRange)
 				.execute();
 
+
+			dateRangeSelector.on('change', function(data){
+  				console.log(data)
+  				console.log(data['start-date']);
+  				var referOptions = {'start-date': data['start-date'], 'end-date': data['end-date'], filters: 'ga:dimension1=@' + userFilter}
+				dailyViews.set({query: data}).execute();
+				dailyRefer.set({query: referOptions}).execute();
+				totalData.execute();
+			});
+
+
+			//****** TOTALS FOR TIME PERIOD *****//
+
+  			var totalData = new gapi.analytics.report.Data({
+  				query: {
+  					ids: 'ga:60921314',
+  					metrics: 'ga:uniquePageviews, ga:pageviews, ga:avgTimeOnPage',
+  					'start-date': dateRange['start-date'],
+  					'end-date':dateRange['end-date'],
+  					filters: 'ga:dimension1=@' + userFilter
+  				}
+  			})
+
+  			totalData.on('success', function(response){
+  				console.log(response)
+  				var u, p, t, s;
+  				u = response.rows[0][0]
+  				p = response.rows[0][1]
+  				t = response.rows[0][2]
+  				s = toHHMMSS(t)
+
+  				$( '#totalUnique' ).html(u)
+  				$( '#totalPages').html(p)
+  				$( '#totalAveTime').html(s)
+  			})
+
+  			totalData.execute();
+
+
 			
+
 
 
 			var dailyViews = new gapi.analytics.googleCharts.DataChart({
@@ -286,47 +335,9 @@
   			dailyRefer.execute();
 
 
-  			//****** TOTALS FOR TIME PERIOD *****//
+  			
 
-  			var totalData = new gapi.analytics.report.Data({
-  				query: {
-  					ids: 'ga:60921314',
-  					metrics: 'ga:uniquePageviews, ga:pageviews, ga:avgTimeOnPage',
-  					'start-date': dateRange['start-date'],
-  					'end-date':dateRange['end-date'],
-  					filters: 'ga:dimension1=@' + userFilter
-  				}
-  			})
-
-  			totalData.on('success', function(response){
-  				console.log(response)
-  				var u, p, t, s;
-  				u = response.rows[0][0]
-  				p = response.rows[0][1]
-  				t = response.rows[0][2]
-  				s = toHHMMSS(t)
-
-  				$( '#totalUnique' ).html(u)
-  				$( '#totalPages').html(p)
-  				$( '#totalAveTime').html(s)
-  			})
-
-  			totalData.execute();
-
-
-			
-
-
-  			$( '#reporterFilter' ).on('change', function(){
-  				var newReporter = $(this).find(":selected").val(), newReporterFilter = {filters: 'ga:dimension1=@' + newReporter};
-  				dailyViews.set({query: newReporterFilter }).execute();
-  				dailyRefer.set({query: newReporterFilter }).execute();
-  				monthlyMetrics.set({query: newReporterFilter}).execute();
-  				yearlyMetrics.set({query: newReporterFilter}).execute();
-  				totalData.set({query:newReporterFilter}).execute();
-
-
-  			})
+  			
 
   			var dailyViewRowClickListener;
 
@@ -368,15 +379,7 @@
   			})/*end 'dailyViews on success'*/
 
 
-  			dateRangeSelector.on('change', function(data){
-  				console.log(data)
-  				console.log(data['start-date']);
-  				var referOptions = {'start-date': data['start-date'], 'end-date': data['end-date'], filters: 'ga:dimension1=@' + userFilter}
-				dailyViews.set({query: data}).execute();
-				dailyRefer.set({query: referOptions}).execute();
-				totalData.execute();
-			});
-
+  			
 
 
   			$( 'input[name=monthMetric]' ).change(function(){
