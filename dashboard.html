@@ -231,7 +231,7 @@
 			})
 
 			var dateRange = {
-					'start-date': 'today',
+					'start-date': 'yesterday',
 					'end-date': 'today'
 				};
 
@@ -245,6 +245,8 @@
 			dateRangeSelector.on('change', function(data){
   				console.log(data)
   				console.log(data['start-date']);
+  				dateRange = data;
+  				console.log(dateRange);
   				var referOptions = {'start-date': data['start-date'], 'end-date': data['end-date'], filters: 'ga:dimension1=@' + userFilter}
 				dailyViews.set({query: data}).execute();
 				dailyRefer.set({query: referOptions}).execute();
@@ -288,7 +290,7 @@
 						  	query: {
 
 						  			ids: 'ga:60921314',
-						  			metrics: 'ga:uniquePageviews',
+						  			metrics: 'ga:uniquePageviews, ga:pageviews, ga:avgTimeOnPage',
 						  			dimensions: 'ga:dimension2', 
 						  			'start-date': 'today',
 						  			'end-date': 'today',
