@@ -3,13 +3,16 @@
 	<head>
 		<meta charset="utf-8">
 		<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-	    <meta name="description" content="Demo project with jQuery">
+	    <meta name="description" content="YHR Analytics Dashboard">
 		<meta name="viewport" content="width=device-width, initial-scale=1">
 		<link rel="stylesheet" href="http://netdna.bootstrapcdn.com/bootstrap/3.0.3/css/bootstrap.min.css">	
 <!-- Latest compiled and minified CSS -->
 		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
 		<link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" crossorigin="anonymous">
-		<script src="http://code.jquery.com/jquery-1.10.2.min.js"></script>
+		<script
+  src="https://code.jquery.com/jquery-2.2.4.js"
+  integrity="sha256-iT6Q9iMJYuQiMWNd9lDyBUStIq/8PuOW33aOqmvFpqI="
+  crossorigin="anonymous"></script>
 		<!-- Latest compiled and minified JS -->
 		<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>	
 		<script src="https://cdnjs.cloudflare.com/ajax/libs/handlebars.js/4.0.6/handlebars.min.js" integrity="sha256-1O3BtOwnPyyRzOszK6P+gqaRoXHV6JXj8HkjZmPYhCI=" crossorigin="anonymous"></script>
@@ -54,15 +57,33 @@
 				margin: 10px;
 			}
 
-			#traffic-totals>h5, #traffic-totals>span, #traffic-totals>h4 {
-				display: block;
-				float:left;
+			#traffic-totals>h3 {
+			
 				margin: 5px;
 			}
 
+			th.traffic-totals {
+				font-size: 2em;
+				font-weight:bold;
+			}
+			
 
-			#traffic-totals>h4 {
-				margin-bottom:5px;
+			.section-title {
+				border-bottom: 1px solid #333333;
+			}
+
+			div#todayTraffic, div#todayReferral {
+				min-height:200px;
+			}
+
+			#reporterFilter {
+				margin: 9px;
+			}
+			#control-group {
+				padding: 10px;
+				background-color: #e8e8e8;
+				border-radius: 10px;
+				
 			}
 
 
@@ -72,73 +93,81 @@
 		<div class="container">
 			<div id="embed-api-auth-container"></div>
 			<div class="row">
-				<div class="col-sm-6">
-					<label for="reporterFilter">Select Reporter</label>
-					<select name="reporterName" id="reporterFilter" class="form-control">
-						<option value=# selected>Pick Reporter</option>
-						<option value="tayer@yakimaherald.com">Tammy Ayer</option>
-						<option value="kbain@yakimaherald.com">Kaitlin Bain</option>
-						<option value="pferolito@yakimaherald.com">Phil Ferolito</option>					
-						<option value="maihoang@yakimaherald.com">Mai Hoang</option>
-						<option value="miracheta@yakimaherald.com">Michelle Iracheta</option>
-						<option value="dmeyers@yakimaherald.com">Donald Meyers</option>
-						<option value="mmorey@yakimaherald.com">Mark Morey</option>
-						<option value="moliver@yakimaherald.com">Miles Oliver</option>						
-						<option value="pmuir@yakimaherald.com">Patrick Muir</option>
-						<option value="mrobsach@yakimaherald.com">Molly Robsach</option>
-
-
-					</select>
+				<div class="col-sm-6" id="control-group">
+					<div class="col-sm-12">
+						<select name="reporterName" id="reporterFilter" class="form-control">
+							<option value=# selected>Pick Reporter</option>
+							<option value="tayer@yakimaherald.com">Tammy Ayer</option>
+							<option value="kbain@yakimaherald.com">Kaitlin Bain</option>
+							<option value="pferolito@yakimaherald.com">Phil Ferolito</option>					
+							<option value="maihoang@yakimaherald.com">Mai Hoang</option>
+							<option value="miracheta@yakimaherald.com">Michelle Iracheta</option>
+							<option value="dmeyers@yakimaherald.com">Donald Meyers</option>
+							<option value="mmorey@yakimaherald.com">Mark Morey</option>
+							<option value="moliver@yakimaherald.com">Miles Oliver</option>						
+							<option value="pmuir@yakimaherald.com">Patrick Muir</option>
+							<option value="mrosbach@yakimaherald.com">Molly Rosbach</option>
+						</select>
+					</div>
+					<div class="col-sm-12">
+						<div id="date-range-selector"></div>
+					</div>
+					<div class="col-sm-12">
+						<button class="btn btn-primary btn-block" id="go-button">GO</button>
+					</div>
 				</div>
-				<div class="col-sm-6 col-xs-12">
-					<div id="date-range-selector"></div>
-				
-				</div>
-				<div class="col-sm-4 col-sm-offset-4">
-					<a class="btn btn-primary" role="button" href="#" id="go-button">GO</a>
-
-				</div>
-
-			</div>
-
-			<div class="row">
-
-				
-
 				<div class="col-sm-6 col-xs-12" id="traffic-totals">
-					<h4>Total Traffic</h4>
-					<h5>Uniques: </h5><span id="totalUnique" class="trafficTotal">0</span>
-					<h5>Pageviews: </h5><span id="totalPages" class="trafficTotal">0</span>
-					<h5>Avg Time: </h5><span id="totalAveTime" class="trafficTotal">0</span>
-				</div>
+					<h3 class="section-header">Total Traffic for Period</h3>
+					<table class="table table-condensed">
+						<thead>
+							<tr>
+								<th>Uniques</th>
+								<th>Pageviews</th>
+								<th>Avg Time</th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr>
+								<th id="totalUnique" class="traffic-totals"></th>
+								<th id="totalPages" class="traffic-totals"></th>
+								<th id="totalAveTime" class="traffic-totals"></th>
+							</tr>
+						</tbody>
+					</table>
 
+					
+				</div>
 			</div>
+
+			
 
 			<div class="row">
 
-
-			
 				<div class="col-sm-6">
-					<h4 id="story-traffic-title">Article Traffic</h4>
+					<h4 id="story-traffic-title" class="section-title">Article Traffic</h4>
 					
-					<div id="todayTraffic"></div>
-					<p class="text-center internal-footer bg-primary">Click a title to see referral sources for that article.</p>
+					<div id="todayTraffic">
+						
+					</div>
+
+
 				</div>
 			
 				<div class="col-sm-6">
 
-					<h4 id="referral-traffic-title">Referral Sources</h4>
+					<h4 id="referral-traffic-title" class="section-title">Referral Sources</h4>
 					<div id="todayReferral"></div>
 
-					
-					
-
 				</div>
-		</div><!--end row -->
+			</div><!--end row -->
 
 		<div class="row">
-			
-			
+			<div id="timeDateTraffic">
+			</div>
+
+		</div>
+
+		<div class="row">
 			
 			<h3 class="section-header bg-primary">Past Month</h3>
 
@@ -157,40 +186,12 @@
 			<div class="col-md-10 col-md-offset-1">
 				<div id='monthlyChart'>
 
-
 				</div>
 
 			</div>
-
-
 		</div>
 
-		<div class="row">
-
-			<h3 class="section-header bg-primary">Past Year</h3>
-
-			<div id='radio-wrap-year text-center'>
-						<label class="radio-inline">
-							<input group='yearMetric' type='radio' name='yearMetric' id='radioyearUnique' value="ga:uniquePageviews" checked>Uniques
-						</label>
-						<label class="radio-inline">
-							<input group='yearMetric' type='radio' name='yearMetric' id='radioyearPageview' value='ga:pageviews'>Pageviews
-						</label>
-						<label class="radio-inline">
-							<input group='yearMetric' type='radio' name='yearMetric' id='radioyearTime' value='ga:avgTimeOnPage'>Time on Page
-						</label>
-			</div>
-
-			<div class="col-md-10 col-md-offset-1">
-				<div id='annualChart'>
-
-
-				</div>
-
-			</div>
-
-
-		</div>
+		
 
 
 
@@ -199,7 +200,7 @@
 
 	<script id="daily-table" type="text/x-handlebars-template">
 		<div class="table-responsive">
-			<table class="table table-condensed">
+			<table class="table table-condensed table-striped table-hover">
 				<thead>
 					<tr>
 						<th>Article</th>
@@ -211,7 +212,7 @@
 				<tbody>
 				{{#each this}}
 					<tr>
-						<th>{{title}}</th>
+						<th class="hed">{{title}}</th>
 						<th>{{uniques}}</th>
 						<th>{{pageviews}}</th>
 						<th>{{avetime}}</th>
@@ -235,8 +236,6 @@
 			var dashNS = {
 				userFilter: null,
 				dateRange: {'start-date': 'yesterday', 'end-date': 'today'},
-
-
 			};
 
 
@@ -264,15 +263,16 @@
 			$("#go-button").click(function(){
 				$(this).toggleClass('disabled')
 				fireDaily(dashNS.userFilter, dashNS.dateRange['start-date'], dashNS.dateRange['end-date']);
+				fireRefers(dashNS.userFilter, dashNS.dateRange['start-date'], dashNS.dateRange['end-date']);
 				fireMonthly(dashNS.userFilter)
+				fireHourly(dashNS.userFilter, dashNS.dateRange['start-date'], dashNS.dateRange['end-date']);
 			})
 
 
 
-  			function fireDaily(reporter, dateStart, dateEnd){
+  			function fireDaily(reporter, dateStart, dateEnd, storyHed){
   				
   				$('#todayTraffic').html(loadingIcon)
-
 
   				var rawTraffic = new gapi.analytics.report.Data({
 	  				query: {
@@ -285,10 +285,13 @@
 	  					sort: '-ga:uniquePageviews'
 	  				}
   				})
-  					rawTraffic.on('success', function(response){
+
+  				if (typeof storyHed != 'undefined'){
+  					rawTraffic.set({query: {filters: 'ga:dimension2=@' + storyHed}})
+  				}
+
+  				rawTraffic.on('success', function(response){
   						$("#go-button").toggleClass('disabled');
-  						console.log(response)
-  						console.log(response.rows)
   						var totals, u, p, t, s, tvs=[], articles;
 
   						totals = response['totalsForAllResults'];
@@ -302,66 +305,129 @@
 		  				$( '#totalAveTime').html(s)
 
 		  				var stories = []
-
-		  				response.rows.forEach(function(row){
+		  				var tales = response.rows.slice(0,14)
+		  				tales.forEach(function(row){
 		  					article = {title:row[0], uniques:row[1], pageviews:row[2], avetime: toHHMMSS(row[3])}
-		  					console.log(article)
 		  					stories.push(article)
 		  				})
-
-		  				console.log(stories)
-
-
 
 		  				var source = $("#daily-table").html();
 		  				var template = Handlebars.compile(source);
 		  				var html = template(stories);
 
 		  				$('#todayTraffic').html(html);
+		  				var heds = $('#todayTraffic th.hed')
+		  				if (storyHed === undefined){
+		  					$('#todayTraffic tbody').one( "click", "th.hed", function(){
+		  							var storyHed = $( this ).text()
+					                fireDaily(reporter, dashNS.dateRange['start-date'], dashNS.dateRange['end-date'], storyHed)
+					                fireRefers(reporter, dashNS.dateRange['start-date'], dashNS.dateRange['end-date'], storyHed)
+					                fireHourly(reporter, dashNS.dateRange['start-date'], dashNS.dateRange['end-date'], storyHed)
+					                $("#go-button").toggleClass('disabled');
+		  					})
+		  				} else 
+		  					{ $('#todayTraffic tbody').on("click", "th.hed", function(){
+		  								var storyHed = undefined;
+					                  fireDaily(dashNS.userFilter, dashNS.dateRange['start-date'], dashNS.dateRange['end-date'])
+					                  fireRefers(dashNS.userFilter, dashNS.dateRange['start-date'], dashNS.dateRange['end-date'])
+					                  fireHourly(dashNS.userFilter, dashNS.dateRange['start-date'], dashNS.dateRange['end-date'])
+					                  $("#go-button").toggleClass('disabled');
+
+					                })
+		  					}
+		  				
+
+
+
   					})
+
   				rawTraffic.execute();
+  			};
+
+  			function fireRefers(reporter, dateStart, dateEnd, storyHed){
+  				
+
+  				var dailyRefer = new gapi.analytics.googleCharts.DataChart({
+
+  						query: {
+  								ids: 'ga:60921314',
+  								metrics: 'ga:uniquePageviews, ga:pageviews',
+  								dimensions: 'ga:source',
+  								'start-date': dateStart,
+  								'end-date': dateEnd,
+  								sort: '-ga:uniquePageviews',
+  								filters: 'ga:dimension1=@' + reporter,
+  								'max-results': '15'
+
+  						},
+  						chart: {
+  							type: 'TABLE',
+  							container: 'todayReferral',
+  							options: {
+  								width: '100%'
+
+  							}
+  						}
+  					})
+
+  				if (typeof storyHed != 'undefined'){
+  					dailyRefer.set({query: {filters: 'ga:dimension2=@' + storyHed}})
+  				}
+
+
+  				dailyRefer.execute();
   			};
 
 
 			
-  			var dailyViewRowClickListener;
+  			
+  			function fireHourly(reporter, dateStart, dateEnd, storyHed){
+  				var hourlyMetrics = new gapi.analytics.googleCharts.DataChart({
+  					query: {
+  						ids: 'ga:60921314',
+  						metrics: 'ga:uniquePageviews, ga:pageviews',
+  						dimensions: 'ga:dateHour',
+  						'start-date': dateStart,
+  						'end-date': dateEnd,
+  						filters: 'ga:dimension1=@' + reporter
 
-  			/*dailyViews.on('success', function(response){
-  				console.log(response, response.chart)
-  				var dailyViewChart = response.chart;
-  				var dailyViewDataTable = response.dataTable;
 
-  				dailyViewRowClickListener = google.visualization.events.addListener(dailyViewChart, 'select', function(event){
-
-  					if (!dailyViewChart.getSelection().length) {
-  						var options = {
-  							query: {
-  								filters: 'ga:dimension1=@' + userFilter
-  								}
-  							}
-  						var headingTitle = 'Referral Sources'
+  					},
+  					chart: {
+  						container: 'timeDateTraffic',
+  						type: 'COLUMN',
+  						options: {
+  							width: '80%'
   						}
+  					}
+  				})
 
-  					else {
-  						var row = dailyViewChart.getSelection()[0].row;
-	  					var rawTitle = dailyViewDataTable.getValue(row, 0);
-	  					var storyTitle = rawTitle.replace(/,/, '\\,')
-	  					var shortTitle = storyTitle.split('|')[0]
-	  					var options = {
-	  						query: {
-	  							filters: 'ga:dimension2==' + storyTitle
-	  						}
-	  					};
-	  					var headingTitle = 'Referral Sources - ' + shortTitle
-  					};
+  				if (typeof storyHed != 'undefined'){
+  					hourlyMetrics.set({query: {filters: 'ga:dimension2=@' + storyHed}})
+  				}
 
-  					
-  					dailyRefer.set(options).execute();
-  					$( '#referral-traffic-title' ).text(headingTitle);
+  				
 
-  				})/*end listner & function
+  				var s = $('div.DateRangeSelector div.DateRangeSelector-item:last-child input').attr('min')
+  				var e = $('div.DateRangeSelector div.DateRangeSelector-item:first-child input').attr('max')
+  				var sd = new Date(s)
+  				var ed = new Date(e)
+  				var d = ed - sd
 
-  			}) end 'dailyViews on success'*/ 
+  				console.log(e, ed)
+  				console.log(s, sd)
+  				console.log(d)
+
+  				if (d > 86400000){
+  					hourlyMetrics.set({query: {dimensions: 'ga:day'}});
+  				} else {
+  					hourlyMetrics.set({query: {dimensions: 'ga:dateHour'}})
+  				}
+
+  				hourlyMetrics.execute();
+  				
+
+  			};
 
 
   			
