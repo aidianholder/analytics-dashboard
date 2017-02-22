@@ -26,8 +26,8 @@
 		</script>
 
 		<script src="date-range-selector.js"></script>
-		<script src="active-users.js"></script>
-
+		<script src='main.js'></script>
+		
 
 		<style type="text/css">
 			h3.section-header {
@@ -96,25 +96,29 @@
 				<div class="col-sm-6" id="control-group">
 					<div class="col-sm-12">
 						<select name="reporterName" id="reporterFilter" class="form-control">
-							<option value=# selected>Pick Reporter</option>
+							<option value="none" selected>Pick Reporter</option>
 							<option value="tayer@yakimaherald.com">Tammy Ayer</option>
 							<option value="kbain@yakimaherald.com">Kaitlin Bain</option>
 							<option value="pferolito@yakimaherald.com">Phil Ferolito</option>					
 							<option value="maihoang@yakimaherald.com">Mai Hoang</option>
 							<option value="miracheta@yakimaherald.com">Michelle Iracheta</option>
+							<option value="mmccord@yakimaherald.com">Madison McCord</option>
 							<option value="dmeyers@yakimaherald.com">Donald Meyers</option>
 							<option value="mmorey@yakimaherald.com">Mark Morey</option>
 							<option value="moliver@yakimaherald.com">Miles Oliver</option>						
 							<option value="pmuir@yakimaherald.com">Patrick Muir</option>
 							<option value="mrosbach@yakimaherald.com">Molly Rosbach</option>
+							<option value="spruill@yakimaherald.com">Scott Spruill</option>
+							<option value="lthompson@yakimaherald.com">Luke Thompson</option>
+							<option value="runderwood@yakimaherald.com">Roger Underwood</option>
 						</select>
 					</div>
 					<div class="col-sm-12">
 						<div id="date-range-selector"></div>
 					</div>
-					<div class="col-sm-12">
+					<!--<div class="col-sm-12">
 						<button class="btn btn-primary btn-block" id="go-button">GO</button>
-					</div>
+					</div>-->
 				</div>
 				<div class="col-sm-6 col-xs-12" id="traffic-totals">
 					<h3 class="section-header">Total Traffic for Period</h3>
@@ -162,14 +166,15 @@
 			</div><!--end row -->
 
 		<div class="row">
-			<div id="timeDateTraffic">
+			<h3 class="section-title">Daily/Hourly Traffic</h3>
+			<div id="timeDateTraffic" class="col-md-10 col-md-offset-1">
 			</div>
 
 		</div>
 
 		<div class="row">
 			
-			<h3 class="section-header bg-primary">Past Month</h3>
+			<h3 class="section-title">Past Month</h3>
 
 			<div id='radio-wrap-monthly text-center'>
 						<label class="radio-inline">
@@ -223,271 +228,32 @@
 			</table>
 		</div>
 
+		</script>
 
+	<script id="referral-table" type="text/x-handlebars-template">
+		<div class="table-responsive">
+			<table class="table table-condensed table-striped table-hover">
+				<thead>
+					<tr>
+						<th>Source</th>
+						<th>Uniques</th>
+						<th>Pageviews</th>
+						
+					</tr>
+				</thead>
+				<tbody>
+				{{#each this}}
+					<tr>
+						<th>{{site}}</th>
+						<th>{{uniques}}</th>
+						<th>{{pageviews}}</th>
+					</tr>
+				{{/each}}
 
+				</tbody>
+			</table>
+		</div>
 
 	</script>
 	
-
-
-	<script type="text/javascript">
-		gapi.analytics.ready(function() {
-
-			var dashNS = {
-				userFilter: null,
-				dateRange: {'start-date': 'yesterday', 'end-date': 'today'},
-			};
-
-
-			gapi.analytics.auth.authorize({
-			    container: 'embed-api-auth-container',
-			    clientid: '358104014451-02duldjjicu85olvisf18jcm6t297oj7.apps.googleusercontent.com'
-			  });
-
-			
-
-
-			$( '#reporterFilter' ).on('change', function(){
-				 dashNS.userFilter = $("#reporterFilter").val();
-  			})
-
-		
-			var dateRangeSelector = new gapi.analytics.ext.DateRangeSelector({
-				container: 'date-range-selector'
-			})
-				.set(dashNS.dateRange)
-				.execute();
-				
-			dateRangeSelector.on('change', function(data){dashNS.dateRange = data;});
-
-			$("#go-button").click(function(){
-				$(this).toggleClass('disabled')
-				fireDaily(dashNS.userFilter, dashNS.dateRange['start-date'], dashNS.dateRange['end-date']);
-				fireRefers(dashNS.userFilter, dashNS.dateRange['start-date'], dashNS.dateRange['end-date']);
-				fireMonthly(dashNS.userFilter)
-				fireHourly(dashNS.userFilter, dashNS.dateRange['start-date'], dashNS.dateRange['end-date']);
-			})
-
-
-
-  			function fireDaily(reporter, dateStart, dateEnd, storyHed){
-  				
-  				$('#todayTraffic').html(loadingIcon)
-
-  				var rawTraffic = new gapi.analytics.report.Data({
-	  				query: {
-	  					ids: 'ga:60921314',
-	  					metrics: 'ga:uniquePageviews, ga:pageviews, ga:avgTimeOnPage',
-	  					'start-date': dateStart,
-	  					'end-date': dateEnd,
-	  					dimensions: 'ga:dimension2',
-	  					filters: 'ga:dimension1=@' + reporter,
-	  					sort: '-ga:uniquePageviews'
-	  				}
-  				})
-
-  				if (typeof storyHed != 'undefined'){
-  					rawTraffic.set({query: {filters: 'ga:dimension2=@' + storyHed}})
-  				}
-
-  				rawTraffic.on('success', function(response){
-  						$("#go-button").toggleClass('disabled');
-  						var totals, u, p, t, s, tvs=[], articles;
-
-  						totals = response['totalsForAllResults'];
-  						u = totals['ga:uniquePageviews'];
-  						p = totals['ga:pageviews'];
-  						t = totals['ga:avgTimeOnPage']
-  						s = toHHMMSS(t)
-
-  						$( '#totalUnique' ).html(u)
-		  				$( '#totalPages').html(p)
-		  				$( '#totalAveTime').html(s)
-
-		  				var stories = []
-		  				var tales = response.rows.slice(0,14)
-		  				tales.forEach(function(row){
-		  					article = {title:row[0], uniques:row[1], pageviews:row[2], avetime: toHHMMSS(row[3])}
-		  					stories.push(article)
-		  				})
-
-		  				var source = $("#daily-table").html();
-		  				var template = Handlebars.compile(source);
-		  				var html = template(stories);
-
-		  				$('#todayTraffic').html(html);
-		  				var heds = $('#todayTraffic th.hed')
-		  				if (storyHed === undefined){
-		  					$('#todayTraffic tbody').one( "click", "th.hed", function(){
-		  							var storyHed = $( this ).text()
-					                fireDaily(reporter, dashNS.dateRange['start-date'], dashNS.dateRange['end-date'], storyHed)
-					                fireRefers(reporter, dashNS.dateRange['start-date'], dashNS.dateRange['end-date'], storyHed)
-					                fireHourly(reporter, dashNS.dateRange['start-date'], dashNS.dateRange['end-date'], storyHed)
-					                $("#go-button").toggleClass('disabled');
-		  					})
-		  				} else 
-		  					{ $('#todayTraffic tbody').on("click", "th.hed", function(){
-		  								var storyHed = undefined;
-					                  fireDaily(dashNS.userFilter, dashNS.dateRange['start-date'], dashNS.dateRange['end-date'])
-					                  fireRefers(dashNS.userFilter, dashNS.dateRange['start-date'], dashNS.dateRange['end-date'])
-					                  fireHourly(dashNS.userFilter, dashNS.dateRange['start-date'], dashNS.dateRange['end-date'])
-					                  $("#go-button").toggleClass('disabled');
-
-					                })
-		  					}
-		  				
-
-
-
-  					})
-
-  				rawTraffic.execute();
-  			};
-
-  			function fireRefers(reporter, dateStart, dateEnd, storyHed){
-  				
-
-  				var dailyRefer = new gapi.analytics.googleCharts.DataChart({
-
-  						query: {
-  								ids: 'ga:60921314',
-  								metrics: 'ga:uniquePageviews, ga:pageviews',
-  								dimensions: 'ga:source',
-  								'start-date': dateStart,
-  								'end-date': dateEnd,
-  								sort: '-ga:uniquePageviews',
-  								filters: 'ga:dimension1=@' + reporter,
-  								'max-results': '15'
-
-  						},
-  						chart: {
-  							type: 'TABLE',
-  							container: 'todayReferral',
-  							options: {
-  								width: '100%'
-
-  							}
-  						}
-  					})
-
-  				if (typeof storyHed != 'undefined'){
-  					dailyRefer.set({query: {filters: 'ga:dimension2=@' + storyHed}})
-  				}
-
-
-  				dailyRefer.execute();
-  			};
-
-
-			
-  			
-  			function fireHourly(reporter, dateStart, dateEnd, storyHed){
-  				var hourlyMetrics = new gapi.analytics.googleCharts.DataChart({
-  					query: {
-  						ids: 'ga:60921314',
-  						metrics: 'ga:uniquePageviews, ga:pageviews',
-  						dimensions: 'ga:dateHour',
-  						'start-date': dateStart,
-  						'end-date': dateEnd,
-  						filters: 'ga:dimension1=@' + reporter
-
-
-  					},
-  					chart: {
-  						container: 'timeDateTraffic',
-  						type: 'COLUMN',
-  						options: {
-  							width: '80%'
-  						}
-  					}
-  				})
-
-  				if (typeof storyHed != 'undefined'){
-  					hourlyMetrics.set({query: {filters: 'ga:dimension2=@' + storyHed}})
-  				}
-
-  				
-
-  				var s = $('div.DateRangeSelector div.DateRangeSelector-item:last-child input').attr('min')
-  				var e = $('div.DateRangeSelector div.DateRangeSelector-item:first-child input').attr('max')
-  				var sd = new Date(s)
-  				var ed = new Date(e)
-  				var d = ed - sd
-
-  				console.log(e, ed)
-  				console.log(s, sd)
-  				console.log(d)
-
-  				if (d > 86400000){
-  					hourlyMetrics.set({query: {dimensions: 'ga:day'}});
-  				} else {
-  					hourlyMetrics.set({query: {dimensions: 'ga:dateHour'}})
-  				}
-
-  				hourlyMetrics.execute();
-  				
-
-  			};
-
-
-  			
-
-
-  			$( 'input[name=monthMetric]' ).change(function(){
-				var metricMonthPicked = $( 'input[name=monthMetric]:checked' ).val();
-				var sortMonthMetric = '-' + metricMonthPicked;
-				var chartTitle = titleHash[metricMonthPicked];
-				monthlyMetrics.set({query: {metrics: metricMonthPicked, sort: sortMonthMetric}});
-				monthlyMetrics.set({chart: {options: {title: chartTitle}}});
-				monthlyMetrics.execute();
-			})
-
-
-
-
-  		function fireMonthly(reporter){
-  			var monthlyMetrics = new gapi.analytics.googleCharts.DataChart({
-				  	query: {
-						
-						ids: 'ga:60921314',
-				  		metrics: 'ga:uniquePageviews',
-				  		dimensions: 'ga:date', 'start-date': '30daysAgo', 'end-date': 'today',
-				  		filters: 'ga:dimension1=@' + dashNS.userFilter
-				  	},
-				  	chart: {
-				  		container: 'monthlyChart',
-				  		type: 'COLUMN',
-				  		options: {
-				  			width: '80%',
-				  			title: 'Unique Page Views'
-
-				  		}
-				  	}
-				 });
-
-  			monthlyMetrics.execute();
-  		};
-
-
-  		
-
-		})/*end ready function for GAPI*/
-
-		var loadingIcon = '<i class="fa fa-cog fa-spin fa-5x fa-fw"></i>'
-
-
-		var toHHMMSS = function (seconds) {
-				var sec = Math.round(seconds)
-			    var sec_num = parseInt(sec, 10); // don't forget the second param
-			    var hours   = Math.floor(sec_num / 3600);
-			    var minutes = Math.floor((sec_num - (hours * 3600)) / 60);
-			    var seconds = sec_num - (hours * 3600) - (minutes * 60);
-
-			    if (hours   < 10) {hours   = "0"+hours;}
-			    if (minutes < 10) {minutes = "0"+minutes;}
-			    if (seconds < 10) {seconds = "0"+seconds;}
-			    return hours+':'+minutes+':'+seconds;
-			};
-
-	</script>
 </html>
