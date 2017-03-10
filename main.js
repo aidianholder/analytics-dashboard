@@ -150,7 +150,7 @@
               };
 
               function fireHourly(dateStart, dateEnd, reporter, storyHed){
-                  var s, e, sd, ed, d, hourlyMetrics
+                  var s, e, sd, ed, d, hourlyMetrics;
                   hourlyMetrics = new gapi.analytics.googleCharts.DataChart({
                       query: {
                           ids: 'ga:60921314',
@@ -165,7 +165,13 @@
                           container: 'timeDateTraffic',
                           type: 'COLUMN',
                           options: {
-                              width: '80%'
+                              width: '80%',
+                              hAxis: {
+                                format: 'MMM d h',
+                                gridlines: {
+                                  count: -1
+                                }
+                              }
                           }
                       }
                   })
@@ -186,12 +192,21 @@
 
                   if (d > 86400000){
                       hourlyMetrics.set({query: {dimensions: 'ga:day'}});
+                      
                   } else {
-                      hourlyMetrics.set({query: {dimensions: 'ga:dateHour'}})
+                      hourlyMetrics.set({query: {dimensions: 'ga:dateHour'}});
+                      hourlyMetrics.set({chart: {options: {hAxis:{format: 'd hh'}}}});
                   }
 
                   hourlyMetrics.execute();
+
+                  hourlyMetrics.on('success', function(response){
+                      console.log(response.chart);
+                      console.log(response.data);
+                    })
               };
+
+
 
               $( 'input[name=monthMetric]' ).change(function(){
                 var metricMonthPicked = $( 'input[name=monthMetric]:checked' ).val();
@@ -215,8 +230,13 @@
                           type: 'COLUMN',
                           options: {
                               width: '80%',
-                              title: 'Unique Page Views'
-
+                              title: 'Unique Page Views',
+                              hAxis: {
+                                format: 'MMM dd y',
+                                gridlines: {
+                                  count: -1
+                                }
+                              }
                           }
                       }
                  });
