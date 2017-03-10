@@ -59,8 +59,8 @@
                           var totals, u, p, t, s, stories, tales, article;
 
                           totals = response.totalsForAllResults;
-                          u = totals['ga:uniquePageviews'];
-                          p = totals['ga:pageviews'];
+                          u = parseInt(totals['ga:uniquePageviews']).toLocaleString();
+                          p = parseInt(totals['ga:pageviews']).toLocaleString();
                           t = totals['ga:avgTimeOnPage']
                           s = toHHMMSS(t)
 
