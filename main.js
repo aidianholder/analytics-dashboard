@@ -48,11 +48,13 @@
 
                   if (reporter != 'none'){
                       rawTraffic.set({query: {filters: 'ga:dimension1=@' + reporter}});
-                  }
+                  } else {
+                    rawTraffic.set({query: {filters: 'ga:pagePath=@article'}});
+                  };
 
                   if (typeof storyHed != 'undefined'){
                       rawTraffic.set({query: {filters: 'ga:dimension2=@' + storyHed}});
-                  }
+                  };
 
                   rawTraffic.on('success', function(response){
                           /*$("#go-button").toggleClass('disabled');*/
@@ -166,7 +168,7 @@
                           type: 'COLUMN',
                           options: {
                               width: '80%',
-                              chartArea: {left:20, top:10, width: '80%', height: '80%'},
+                              chartArea: {left:20},
                               hAxis: {
                                 format: 'MMM d h',
                                 gridlines: {
@@ -176,8 +178,11 @@
                               vAxis: {
                                 format: 'decimal',
                                 gridlines: {
-                                  count: -1
-                                }
+                                  color: '#777',
+                                  count: 4
+                                },
+                                textPosition: 'out',
+                                textStyle: {fontSize: 12}
                               }
                           }
                       }
